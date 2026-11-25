@@ -33,6 +33,17 @@ internal static partial class AuthTestHelpers
         return client.SendAsync(request);
     }
 
+    public static Task<HttpResponseMessage> LogoutWithAsync(this HttpClient client, string? cookie)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/logout");
+        if (cookie is not null)
+        {
+            request.Headers.Add("Cookie", cookie);
+        }
+
+        return client.SendAsync(request);
+    }
+
     /// <summary>The "name=value" part of the refresh cookie.</summary>
     public static string RefreshCookiePair(this HttpResponseMessage response) =>
         response.RefreshSetCookie().Split(';')[0];

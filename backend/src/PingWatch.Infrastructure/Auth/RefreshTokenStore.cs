@@ -41,9 +41,7 @@ internal sealed class RefreshTokenStore(PingWatchDbContext db) : IRefreshTokenSt
             // A used token coming back means it was copied: end the whole session.
             if (current.UsedAt is not null)
             {
-                await db.RefreshTokens
-                    .Where(t => t.FamilyId == current.FamilyId && t.RevokedAt == null)
-                    .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), cancellationToken);
+                await RevokeFamilyAsync(current.FamilyId, now, cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
             }
 
@@ -63,6 +61,35 @@ internal sealed class RefreshTokenStore(PingWatchDbContext db) : IRefreshTokenSt
 
         return new RotatedRefreshToken(current.UserId, next);
     }
+
+
+    // -- Helpers -----------------------------------------------------------------
+    public async Task RevokeSessionAsync(string token, CancellationToken cancellationToken)
+    {
+        var hash = Hash(token);
+        var now = DateTimeOffset.UtcNow;
+
+        // Revoke the presented token first. This waits for a refresh that is rotating it right now,
+        // so the family update below also sees, and revokes, the replacement that refresh created.
+        await db.RefreshTokens
+            .Where(t => t.TokenHash == hash && t.RevokedAt == null)
+            .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), cancellationToken);
+
+        var familyId = await db.RefreshTokens
+            .Where(t => t.TokenHash == hash)
+            .Select(t => (Guid?)t.FamilyId)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (familyId is { } id)
+        {
+            await RevokeFamilyAsync(id, now, cancellationToken);
+        }
+    }
+
+    private Task<int> RevokeFamilyAsync(Guid familyId, DateTimeOffset now, CancellationToken cancellationToken) =>
+        db.RefreshTokens
+            .Where(t => t.FamilyId == familyId && t.RevokedAt == null)
+            .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), cancellationToken);
 
     private async Task<IssuedRefreshToken> AddAsync(
         Guid userId, Guid familyId, string securityStamp, CancellationToken cancellationToken)
