@@ -26,6 +26,7 @@ public sealed class PingWatchDbContext(DbContextOptions<PingWatchDbContext> opti
     public DbSet<StatusPage> StatusPages => Set<StatusPage>();
     public DbSet<StatusPageMonitor> StatusPageMonitors => Set<StatusPageMonitor>();
     public DbSet<AlertLogEntry> AlertLog => Set<AlertLogEntry>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.23" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\PingWatch.Domain\PingWatch.Domain.csproj" />
   </ItemGroup>
 </Project>

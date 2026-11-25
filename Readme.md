@@ -36,6 +36,14 @@ npm install
 npm run dev
 ```
 
+The API needs a local JWT signing key, stored outside the repository. Run once (PowerShell):
+
+```powershell
+$b = New-Object byte[] 48; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); dotnet user-secrets set "Jwt:SigningKey" ([Convert]::ToBase64String($b)) --project backend/src/PingWatch.Api
+```
+
+In production, set the `Jwt__SigningKey` environment variable. Integration tests need Docker running.
+
 ## Checks
 
 ```

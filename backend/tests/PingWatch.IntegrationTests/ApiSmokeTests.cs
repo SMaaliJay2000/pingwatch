@@ -1,10 +1,9 @@
 using System.Net;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace PingWatch.IntegrationTests;
 
-public class ApiSmokeTests(WebApplicationFactory<Program> factory)
-    : IClassFixture<WebApplicationFactory<Program>>
+[Collection(ApiCollection.Name)]
+public class ApiSmokeTests(ApiFactory factory)
 {
     [Fact]
     public async Task OpenApi_document_is_served()

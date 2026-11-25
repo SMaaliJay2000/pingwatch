@@ -35,6 +35,17 @@ internal static class ModelConfiguration
             OwnedByAccount(e, x => x.AccountId);
         });
 
+        builder.Entity<RefreshToken>(e =>
+        {
+            e.ToTable("refresh_tokens");
+            e.Property(x => x.TokenHash).HasMaxLength(64);
+            e.HasIndex(x => x.TokenHash).IsUnique();
+            e.HasIndex(x => x.FamilyId);
+            e.HasOne<ApplicationUser>().WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         builder.Entity<IdentityUserClaim<Guid>>().ToTable("user_claims");
         builder.Entity<IdentityUserLogin<Guid>>().ToTable("user_logins");
         builder.Entity<IdentityUserToken<Guid>>().ToTable("user_tokens");

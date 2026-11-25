@@ -1,5 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <!-- Lets "dotnet user-secrets" keep the local JWT signing key outside the repository. -->
+    <UserSecretsId>pingwatch-api-dev</UserSecretsId>
+  </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.23" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.23" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.23">
       <PrivateAssets>all</PrivateAssets>
