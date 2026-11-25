@@ -74,6 +74,9 @@ public sealed class MonitorService(
             if (oldTarget != (monitor.Type, monitor.Url, monitor.Host, monitor.Port))
             {
                 monitor.NextCheckAt = now;
+                
+                // A failure of the old target must not count against the new one.
+                monitor.ConsecutiveFailures = 0;
             }
             else if (monitor.NextCheckAt > latest)
             {

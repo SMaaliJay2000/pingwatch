@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\PingWatch.Application\PingWatch.Application.csproj" />
     <ProjectReference Include="..\..\src\PingWatch.Infrastructure\PingWatch.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\PingWatch.Worker\PingWatch.Worker.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

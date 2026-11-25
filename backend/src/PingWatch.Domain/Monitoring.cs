@@ -21,6 +21,42 @@ public class UptimeMonitor : ITenantOwned
     public int ConsecutiveFailures { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
+    /// <summary>Applies one check result, following the incident lifecycle in SPEC section 6.</summary>
+    public CheckTransition RecordCheck(bool isUp, DateTimeOffset now)
+    {
+        if (Status == MonitorStatus.Paused)
+        {
+            return CheckTransition.Ignored;
+        }
+
+        LastCheckedAt = now;
+
+        if (isUp)
+        {
+            var wasDown = Status == MonitorStatus.Down;
+            Status = MonitorStatus.Up;
+            ConsecutiveFailures = 0;
+            return wasDown ? CheckTransition.Recovered : CheckTransition.NoChange;
+        }
+
+        ConsecutiveFailures++;
+
+        if (Status == MonitorStatus.Down)
+        {
+            return CheckTransition.NoChange;
+        }
+
+        if (ConsecutiveFailures < CheckRules.FailuresToGoDown)
+        {
+            // Still up (or pending) until a quick retry confirms the failure.
+            NextCheckAt = now + CheckRules.RetryDelay;
+            return CheckTransition.RetryScheduled;
+        }
+
+        Status = MonitorStatus.Down;
+        return CheckTransition.WentDown;
+    }
+
     /// <summary>Stops scheduling. Returns false if it was already paused.</summary>
     public bool Pause()
     {

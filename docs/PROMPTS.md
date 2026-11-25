@@ -53,7 +53,7 @@ Implement monitor CRUD per SPEC section 8: list, create, get, update, delete, pa
 Integration tests for plan limits and tenant isolation (account A cannot read account B's monitor).
 ```
 
-## M4 — Check engine (worker)
+## M4 — Check engine (worker) - done up to this
 
 ```
 Implement PingWatch.Worker per SPEC section 6:
