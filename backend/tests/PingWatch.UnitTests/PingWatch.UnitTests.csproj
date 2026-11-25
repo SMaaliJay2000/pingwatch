@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.2" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <!-- Keep below 8.0: v8+ requires a paid licence for commercial use. -->
+    <PackageReference Include="FluentAssertions" Version="[7.2.2,8.0.0)" />
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PingWatch.Application\PingWatch.Application.csproj" />
+    <ProjectReference Include="..\..\src\PingWatch.Infrastructure\PingWatch.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="FluentAssertions" />
+  </ItemGroup>
+</Project>

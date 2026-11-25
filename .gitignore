@@ -1,0 +1,26 @@
+# .NET
+bin/
+obj/
+TestResults/
+.vs/
+*.user
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+
+# Logs, editors, OS
+*.log
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local scratch folder (holds a copy of CLAUDE.md)
+Claude outputs/

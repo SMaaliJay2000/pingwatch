@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\PingWatch.Application\PingWatch.Application.csproj" />
+  </ItemGroup>
+</Project>
