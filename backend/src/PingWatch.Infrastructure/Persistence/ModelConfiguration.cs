@@ -87,6 +87,8 @@ internal static class ModelConfiguration
         {
             e.ToTable("daily_stats");
             e.HasKey(x => new { x.MonitorId, x.Date });
+            // The naming convention would produce "p95ms"; SPEC calls it p95_ms.
+            e.Property(x => x.P95Ms).HasColumnName("p95_ms");
             e.Property(x => x.UptimePct).HasPrecision(6, 3);
             OwnedByParent<DailyStat, UptimeMonitor>(e, x => new { x.MonitorId, x.AccountId });
         });

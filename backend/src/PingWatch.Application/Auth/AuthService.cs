@@ -74,6 +74,9 @@ public sealed class AuthService(
         return user is null ? null : new AuthSession(accessTokens.Issue(user), rotated.Next);
     }
 
+    public Task LogoutAsync(string refreshToken, CancellationToken cancellationToken) =>
+        refreshTokens.RevokeSessionAsync(refreshToken, cancellationToken);
+
     public async Task ForgotPasswordAsync(ForgotPasswordRequest request, CancellationToken cancellationToken)
     {
         await ForgotPasswordValidator.Instance.ValidateAndThrowAsync(request, cancellationToken);

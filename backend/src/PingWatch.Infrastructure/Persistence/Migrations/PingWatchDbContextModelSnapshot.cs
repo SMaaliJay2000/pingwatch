@@ -321,7 +321,7 @@ namespace PingWatch.Infrastructure.Persistence.Migrations
 
                     b.Property<int?>("P95Ms")
                         .HasColumnType("integer")
-                        .HasColumnName("p95ms");
+                        .HasColumnName("p95_ms");
 
                     b.Property<decimal>("UptimePct")
                         .HasPrecision(6, 3)

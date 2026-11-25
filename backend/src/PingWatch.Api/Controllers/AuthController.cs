@@ -62,6 +62,19 @@ public sealed class AuthController(AuthService auth) : ControllerBase
         return Problem(statusCode: StatusCodes.Status401Unauthorized, title: "Session expired");
     }
 
+    // Anonymous on purpose: signing out must work after the access token has expired.
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+    {
+        if (Request.Cookies[RefreshCookie] is { Length: > 0 } token)
+        {
+            await auth.LogoutAsync(token, cancellationToken);
+        }
+
+        Response.Cookies.Delete(RefreshCookie, CookieSettings());
+        return NoContent();
+    }
+
     [HttpPost("forgot-password")]
     [EnableRateLimiting(RateLimitPolicies.AuthEmail)]
     public async Task<IActionResult> ForgotPassword(

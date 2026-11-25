@@ -30,36 +30,36 @@ PingWatch checks websites, APIs and servers every 1–5 minutes, alerts the owne
 
 The MVP ships HTTP, keyword, TCP port and SSL checks with email and webhook alerts; everything else waits for paying users to ask.
 
-| Feature | Description | Phase |
-| --- | --- | --- |
-| HTTP(S) monitor | GET/HEAD/POST a URL; up when status matches expected (default 200–399) within timeout | MVP |
-| Keyword monitor | Up when the response body contains (or does not contain) a given string | MVP |
-| TCP port monitor | Up when a TCP connection to host:port opens (DB, SMTP, game servers) | MVP |
-| SSL expiry check | Daily certificate check; warn 30, 14, 7 and 1 days before expiry | MVP |
-| Response time history | Per-check latency stored; 24h / 7d / 30d charts | MVP |
-| Uptime % reports | Uptime for 24h, 7d, 30d, 90d per monitor | MVP |
-| Email alerts | Down and recovered emails | MVP |
-| Webhook alerts | JSON POST to any URL; Slack, Discord, Teams via incoming webhooks | MVP |
-| Public status page | Hosted page per account with selected monitors and incident history | MVP |
-| Telegram alerts | Bot messages to a chat | Phase 2 |
-| Domain expiry check | WHOIS/RDAP lookup; warn before renewal date | Phase 2 |
-| Heartbeat (cron) monitor | Down when a job stops calling its unique ping URL in time | Phase 2 |
-| Multi-region checks | Confirm failures from 2+ locations before alerting | Phase 2 |
-| Maintenance windows | Pause alerts during scheduled work | Phase 2 |
-| Custom status page domain | status.client.com via CNAME | Phase 2 |
-| Team members | Invite users to an account with roles | Phase 3 |
-| SMS / WhatsApp alerts | Paid add-on, per-message credits | Phase 3 |
-| Public API | Manage monitors programmatically with API keys | Phase 3 |
+| Feature                   | Description                                                                           | Phase   |
+| ------------------------- | ------------------------------------------------------------------------------------- | ------- |
+| HTTP(S) monitor           | GET/HEAD/POST a URL; up when status matches expected (default 200–399) within timeout | MVP     |
+| Keyword monitor           | Up when the response body contains (or does not contain) a given string               | MVP     |
+| TCP port monitor          | Up when a TCP connection to host:port opens (DB, SMTP, game servers)                  | MVP     |
+| SSL expiry check          | Daily certificate check; warn 30, 14, 7 and 1 days before expiry                      | MVP     |
+| Response time history     | Per-check latency stored; 24h / 7d / 30d charts                                       | MVP     |
+| Uptime % reports          | Uptime for 24h, 7d, 30d, 90d per monitor                                              | MVP     |
+| Email alerts              | Down and recovered emails                                                             | MVP     |
+| Webhook alerts            | JSON POST to any URL; Slack, Discord, Teams via incoming webhooks                     | MVP     |
+| Public status page        | Hosted page per account with selected monitors and incident history                   | MVP     |
+| Telegram alerts           | Bot messages to a chat                                                                | Phase 2 |
+| Domain expiry check       | WHOIS/RDAP lookup; warn before renewal date                                           | Phase 2 |
+| Heartbeat (cron) monitor  | Down when a job stops calling its unique ping URL in time                             | Phase 2 |
+| Multi-region checks       | Confirm failures from 2+ locations before alerting                                    | Phase 2 |
+| Maintenance windows       | Pause alerts during scheduled work                                                    | Phase 2 |
+| Custom status page domain | status.client.com via CNAME                                                           | Phase 2 |
+| Team members              | Invite users to an account with roles                                                 | Phase 3 |
+| SMS / WhatsApp alerts     | Paid add-on, per-message credits                                                      | Phase 3 |
+| Public API                | Manage monitors programmatically with API keys                                        | Phase 3 |
 
 ## 3. Plans & pricing
 
 A free tier drives sign-ups; revenue comes from two paid tiers at $9 and $29 per month. Prices are a starting proposal to validate against competitors before launch.
 
-| Plan | Price (USD/month) | Monitors | Min. interval | Data retention | Status pages | Alert channels |
-| --- | --- | --- | --- | --- | --- | --- |
-| Free | 0 | 5 | 5 min | 7 days | 1 | Email |
-| Starter | 9 | 25 | 1 min | 90 days | 3 | Email, webhook, Slack/Discord |
-| Pro | 29 | 100 | 30 sec | 1 year | 10, custom domain | All, incl. Telegram; SMS credits |
+| Plan    | Price (USD/month) | Monitors | Min. interval | Data retention | Status pages      | Alert channels                   |
+| ------- | ----------------- | -------- | ------------- | -------------- | ----------------- | -------------------------------- |
+| Free    | 0                 | 5        | 5 min         | 7 days         | 1                 | Email                            |
+| Starter | 9                 | 25       | 1 min         | 90 days        | 3                 | Email, webhook, Slack/Discord    |
+| Pro     | 29                | 100      | 30 sec        | 1 year         | 10, custom domain | All, incl. Telegram; SMS credits |
 
 - Yearly billing at 2 months free (Starter $90/yr, Pro $290/yr).
 - Billing through a merchant of record (Lemon Squeezy or Paddle), since Stripe does not onboard Sri Lankan businesses directly. Confirm current availability before integrating.
@@ -76,37 +76,37 @@ Two .NET processes share one PostgreSQL database: the API serves the React app, 
 
 The worker and API deploy independently; the worker can scale to several instances because job pickup uses row locks.
 
-| Layer | Choice | Why |
-| --- | --- | --- |
-| Backend API | ASP.NET Core 9 Web API, Clean Architecture (Domain, Application, Infrastructure, Api) | Your main stack; fast and typed |
-| Check worker | .NET Worker Service (`BackgroundService`) + `System.Threading.Channels` | No extra broker needed for v1 |
-| ORM | EF Core 9 (Npgsql) | Migrations, global tenant filters |
-| Database | PostgreSQL 16 | Free, partitioning for check results |
-| Cache / locks (Phase 2) | Redis | Status-page cache, multi-region job queue |
-| Frontend | React + Vite + TypeScript + Tailwind + shadcn/ui | Your main stack |
-| Auth | ASP.NET Core Identity + JWT | Built in |
-| Email | Resend, Postmark or Amazon SES | Reliable delivery, free tiers |
-| Billing | Lemon Squeezy or Paddle | Merchant of record handles global tax |
-| Reverse proxy | Caddy | Automatic HTTPS, incl. custom status-page domains |
-| Hosting | Docker Compose on one VPS | Cheapest start |
+| Layer                   | Choice                                                                                | Why                                               |
+| ----------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Backend API             | ASP.NET Core 9 Web API, Clean Architecture (Domain, Application, Infrastructure, Api) | Your main stack; fast and typed                   |
+| Check worker            | .NET Worker Service (`BackgroundService`) + `System.Threading.Channels`               | No extra broker needed for v1                     |
+| ORM                     | EF Core 9 (Npgsql)                                                                    | Migrations, global tenant filters                 |
+| Database                | PostgreSQL 16                                                                         | Free, partitioning for check results              |
+| Cache / locks (Phase 2) | Redis                                                                                 | Status-page cache, multi-region job queue         |
+| Frontend                | React + Vite + TypeScript + Tailwind + shadcn/ui                                      | Your main stack                                   |
+| Auth                    | ASP.NET Core Identity + JWT                                                           | Built in                                          |
+| Email                   | Resend, Postmark or Amazon SES                                                        | Reliable delivery, free tiers                     |
+| Billing                 | Lemon Squeezy or Paddle                                                               | Merchant of record handles global tax             |
+| Reverse proxy           | Caddy                                                                                 | Automatic HTTPS, incl. custom status-page domains |
+| Hosting                 | Docker Compose on one VPS                                                             | Cheapest start                                    |
 
 ## 5. Data model
 
 Eleven tables; `check_results` is the only high-volume table and is partitioned by month and rolled up daily.
 
-| Table | Key columns | Notes |
-| --- | --- | --- |
-| accounts | id, name, plan, billing_customer_id, subscription_status, created_at | One per customer; plan drives limits |
-| users | id, account_id, email, password_hash, email_verified, role, created_at | ASP.NET Core Identity tables |
-| monitors | id, account_id, name, type (http, keyword, tcp, ssl, heartbeat), url, host, port, method, expected_status, keyword, keyword_mode, timeout_ms, interval_sec, status (up, down, paused, pending), last_checked_at, next_check_at, consecutive_failures | `next_check_at` indexed; scheduler reads it |
-| check_results | id, monitor_id, checked_at, is_up, status_code, response_ms, error, region | Partitioned by month; raw rows kept per plan retention |
-| daily_stats | monitor_id, date, checks, failures, uptime_pct, avg_ms, p95_ms | Nightly rollup; powers reports and long-range charts |
-| incidents | id, monitor_id, started_at, resolved_at, cause, duration_sec | One open incident per monitor at most |
-| alert_channels | id, account_id, type (email, webhook, slack, discord, telegram, sms), config_json, is_verified | Secrets in config_json encrypted at rest |
-| monitor_channels | monitor_id, channel_id | Many-to-many: which channels each monitor alerts |
-| status_pages | id, account_id, slug, title, custom_domain, logo_url, is_public | Public URL /s/{slug} |
-| status_page_monitors | status_page_id, monitor_id, display_name, sort_order | |
-| alert_log | id, incident_id, channel_id, type (down, up, ssl_warning), sent_at, success, error | Audit and retry tracking |
+| Table                | Key columns                                                                                                                                                                                                                                          | Notes                                                  |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| accounts             | id, name, plan, billing_customer_id, subscription_status, created_at                                                                                                                                                                                 | One per customer; plan drives limits                   |
+| users                | id, account_id, email, password_hash, email_verified, role, created_at                                                                                                                                                                               | ASP.NET Core Identity tables                           |
+| monitors             | id, account_id, name, type (http, keyword, tcp, ssl, heartbeat), url, host, port, method, expected_status, keyword, keyword_mode, timeout_ms, interval_sec, status (up, down, paused, pending), last_checked_at, next_check_at, consecutive_failures | `next_check_at` indexed; scheduler reads it            |
+| check_results        | id, monitor_id, checked_at, is_up, status_code, response_ms, error, region                                                                                                                                                                           | Partitioned by month; raw rows kept per plan retention |
+| daily_stats          | monitor_id, date, checks, failures, uptime_pct, avg_ms, p95_ms                                                                                                                                                                                       | Nightly rollup; powers reports and long-range charts   |
+| incidents            | id, monitor_id, started_at, resolved_at, cause, duration_sec                                                                                                                                                                                         | One open incident per monitor at most                  |
+| alert_channels       | id, account_id, type (email, webhook, slack, discord, telegram, sms), config_json, is_verified                                                                                                                                                       | Secrets in config_json encrypted at rest               |
+| monitor_channels     | monitor_id, channel_id                                                                                                                                                                                                                               | Many-to-many: which channels each monitor alerts       |
+| status_pages         | id, account_id, slug, title, custom_domain, logo_url, is_public                                                                                                                                                                                      | Public URL /s/{slug}                                   |
+| status_page_monitors | status_page_id, monitor_id, display_name, sort_order                                                                                                                                                                                                 |                                                        |
+| alert_log            | id, incident_id, channel_id, type (down, up, ssl_warning), sent_at, success, error                                                                                                                                                                   | Audit and retry tracking                               |
 
 **Database.** PostgreSQL is recommended for cheap hosting and native partitioning; SQL Server works if you prefer it, with the same schema via EF Core migrations.
 
@@ -123,13 +123,13 @@ A background worker runs every due check, confirms failures twice before declari
 
 **Check rules**
 
-| Type | Up when | Default timeout |
-| --- | --- | --- |
-| HTTP | Status code in expected range; redirects followed (max 5) | 10 s |
-| Keyword | HTTP rule passes and body contains / lacks keyword (first 1 MB read) | 10 s |
-| TCP | Socket connects to host:port | 5 s |
-| SSL | Certificate valid, hostname matches, more than threshold days to expiry | 10 s |
-| Heartbeat | Ping URL hit within interval + grace period | n/a |
+| Type      | Up when                                                                 | Default timeout |
+| --------- | ----------------------------------------------------------------------- | --------------- |
+| HTTP      | Status code in expected range; redirects followed (max 5)               | 10 s            |
+| Keyword   | HTTP rule passes and body contains / lacks keyword (first 1 MB read)    | 10 s            |
+| TCP       | Socket connects to host:port                                            | 5 s             |
+| SSL       | Certificate valid, hostname matches, more than threshold days to expiry | 10 s            |
+| Heartbeat | Ping URL hit within interval + grace period                             | n/a             |
 
 **Failure confirmation**
 
@@ -139,14 +139,14 @@ A background worker runs every due check, confirms failures twice before declari
 
 **Incident lifecycle**
 
-| From | Event | To | Action |
-| --- | --- | --- | --- |
-| pending | first check passes | up | none |
-| up | 1 failure | up (suspect) | quick retry |
-| up (suspect) | retry fails | down | open incident, send down alert |
-| up (suspect) | retry passes | up | none |
-| down | check passes | up | close incident, record duration, send recovery alert |
-| any | user pauses | paused | stop scheduling, no alerts |
+| From         | Event              | To           | Action                                               |
+| ------------ | ------------------ | ------------ | ---------------------------------------------------- |
+| pending      | first check passes | up           | none                                                 |
+| up           | 1 failure          | up (suspect) | quick retry                                          |
+| up (suspect) | retry fails        | down         | open incident, send down alert                       |
+| up (suspect) | retry passes       | up           | none                                                 |
+| down         | check passes       | up           | close incident, record duration, send recovery alert |
+| any          | user pauses        | paused       | stop scheduling, no alerts                           |
 
 **Rollup.** A nightly job aggregates yesterday's rows into `daily_stats` and drops raw partitions past the plan's retention.
 
@@ -154,13 +154,13 @@ A background worker runs every due check, confirms failures twice before declari
 
 Alerts go out through a queued dispatcher with retries, one down and one recovery alert per incident plus at most hourly reminders, so users are never spammed.
 
-| Channel | How it's sent | Setup | Phase |
-| --- | --- | --- | --- |
-| Email | Transactional provider (Resend, Postmark or Amazon SES) | Verified address | MVP |
-| Webhook | POST JSON payload, 10 s timeout | URL, optional secret for HMAC signature header | MVP |
-| Slack / Discord / Teams | Their incoming-webhook URL with a formatted message | Paste webhook URL | MVP |
-| Telegram | Bot API sendMessage | Start bot, link chat via code | Phase 2 |
-| SMS / WhatsApp | Gateway (e.g. Twilio, Notify.lk) billed as credits | Verified number | Phase 3 |
+| Channel                 | How it's sent                                           | Setup                                          | Phase   |
+| ----------------------- | ------------------------------------------------------- | ---------------------------------------------- | ------- |
+| Email                   | Transactional provider (Resend, Postmark or Amazon SES) | Verified address                               | MVP     |
+| Webhook                 | POST JSON payload, 10 s timeout                         | URL, optional secret for HMAC signature header | MVP     |
+| Slack / Discord / Teams | Their incoming-webhook URL with a formatted message     | Paste webhook URL                              | MVP     |
+| Telegram                | Bot API sendMessage                                     | Start bot, link chat via code                  | Phase 2 |
+| SMS / WhatsApp          | Gateway (e.g. Twilio, Notify.lk) billed as credits      | Verified number                                | Phase 3 |
 
 **Rules**
 
@@ -175,8 +175,16 @@ Alerts go out through a queued dispatcher with retries, one down and one recover
 ```json
 {
   "event": "monitor.down",
-  "monitor": { "id": "mon_123", "name": "Client site", "url": "https://example.com" },
-  "incident": { "id": "inc_456", "startedAt": "2026-11-25T08:15:00Z", "cause": "HTTP 503" },
+  "monitor": {
+    "id": "mon_123",
+    "name": "Client site",
+    "url": "https://example.com"
+  },
+  "incident": {
+    "id": "inc_456",
+    "startedAt": "2026-11-25T08:15:00Z",
+    "cause": "HTTP 503"
+  },
   "sentAt": "2026-11-25T08:15:42Z"
 }
 ```
@@ -185,29 +193,30 @@ Alerts go out through a queued dispatcher with retries, one down and one recover
 
 The React app talks to a versioned REST API at `/api/v1`, authenticated with JWT access tokens (15 min) and HTTP-only refresh cookies; public status pages and heartbeat pings need no auth.
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| POST | /auth/register | Create account + owner user, send verification email |
-| POST | /auth/login | Issue access token + refresh cookie |
-| POST | /auth/refresh | Rotate tokens |
-| POST | /auth/forgot-password, /auth/reset-password | Password reset flow |
-| GET | /monitors | List monitors with current status and 24h uptime |
-| POST | /monitors | Create monitor (plan limits checked) |
-| GET | /monitors/{id} | Monitor detail |
-| PUT | /monitors/{id} | Update monitor |
-| DELETE | /monitors/{id} | Delete monitor and its history |
-| POST | /monitors/{id}/pause, /monitors/{id}/resume | Pause or resume checks |
-| GET | /monitors/{id}/results?from=&to= | Raw check results (paged) |
-| GET | /monitors/{id}/stats?range=24h\|7d\|30d\|90d | Uptime % and response-time series |
-| GET | /incidents?monitorId=&status= | Incident list |
-| GET / POST / PUT / DELETE | /channels, /channels/{id} | Manage alert channels |
-| POST | /channels/{id}/test | Send a test alert |
-| GET / POST / PUT / DELETE | /status-pages, /status-pages/{id} | Manage status pages |
-| GET | /account, /account/usage | Plan, limits, usage |
-| POST | /billing/checkout | Create checkout session at billing provider |
-| POST | /billing/webhook | Provider events: subscription created, updated, cancelled (signature verified) |
-| GET | /public/status/{slug} | Public status page data (no auth, cached 30 s) |
-| GET / POST | /hb/{token} | Heartbeat ping (no auth) |
+| Method                    | Endpoint                                     | Purpose                                                                        |
+| ------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------ |
+| POST                      | /auth/register                               | Create account + owner user, send verification email                           |
+| POST                      | /auth/login                                  | Issue access token + refresh cookie                                            |
+| POST                      | /auth/refresh                                | Rotate tokens                                                                  |
+| POST                      | /auth/logout                                 | Revoke the current session and clear the refresh cookie                        |
+| POST                      | /auth/forgot-password, /auth/reset-password  | Password reset flow                                                            |
+| GET                       | /monitors                                    | List monitors with current status and 24h uptime                               |
+| POST                      | /monitors                                    | Create monitor (plan limits checked)                                           |
+| GET                       | /monitors/{id}                               | Monitor detail                                                                 |
+| PUT                       | /monitors/{id}                               | Update monitor                                                                 |
+| DELETE                    | /monitors/{id}                               | Delete monitor and its history                                                 |
+| POST                      | /monitors/{id}/pause, /monitors/{id}/resume  | Pause or resume checks                                                         |
+| GET                       | /monitors/{id}/results?from=&to=             | Raw check results (paged)                                                      |
+| GET                       | /monitors/{id}/stats?range=24h\|7d\|30d\|90d | Uptime % and response-time series                                              |
+| GET                       | /incidents?monitorId=&status=                | Incident list                                                                  |
+| GET / POST / PUT / DELETE | /channels, /channels/{id}                    | Manage alert channels                                                          |
+| POST                      | /channels/{id}/test                          | Send a test alert                                                              |
+| GET / POST / PUT / DELETE | /status-pages, /status-pages/{id}            | Manage status pages                                                            |
+| GET                       | /account, /account/usage                     | Plan, limits, usage                                                            |
+| POST                      | /billing/checkout                            | Create checkout session at billing provider                                    |
+| POST                      | /billing/webhook                             | Provider events: subscription created, updated, cancelled (signature verified) |
+| GET                       | /public/status/{slug}                        | Public status page data (no auth, cached 30 s)                                 |
+| GET / POST                | /hb/{token}                                  | Heartbeat ping (no auth)                                                       |
 
 Errors return RFC 7807 problem details. OpenAPI spec generated with Swashbuckle or the built-in .NET OpenAPI support.
 
@@ -215,19 +224,19 @@ Errors return RFC 7807 problem details. OpenAPI spec generated with Swashbuckle 
 
 One React + Vite + TypeScript + Tailwind app serves the marketing site, the dashboard and public status pages; the dashboard refreshes status every 30 seconds.
 
-| Page | Route | Contents |
-| --- | --- | --- |
-| Landing | / | Value proposition, pricing table, sign-up CTA |
-| Sign up / Log in | /signup, /login | Email + password, verification, forgot password |
-| Dashboard | /app | All monitors: status dot, name, uptime 24h, last response time, sparkline; filter by status |
-| Monitor detail | /app/monitors/:id | Status, uptime 24h/7d/30d/90d, response-time chart, incident list, recent checks |
-| New / edit monitor | /app/monitors/new, /app/monitors/:id/edit | Type picker, URL/host, interval, timeout, expected status, keyword, alert channels |
-| Incidents | /app/incidents | Open and past incidents with duration and cause |
-| Alert channels | /app/channels | Add, verify, test, delete channels |
-| Status pages | /app/status-pages | Create page, pick monitors, slug, logo, custom domain |
-| Billing | /app/billing | Current plan, usage vs limits, upgrade, invoices link |
-| Settings | /app/settings | Profile, password, timezone, delete account |
-| Public status page | /s/:slug | Overall status banner, per-monitor 90-day uptime bars, recent incidents |
+| Page               | Route                                     | Contents                                                                                    |
+| ------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Landing            | /                                         | Value proposition, pricing table, sign-up CTA                                               |
+| Sign up / Log in   | /signup, /login                           | Email + password, verification, forgot password                                             |
+| Dashboard          | /app                                      | All monitors: status dot, name, uptime 24h, last response time, sparkline; filter by status |
+| Monitor detail     | /app/monitors/:id                         | Status, uptime 24h/7d/30d/90d, response-time chart, incident list, recent checks            |
+| New / edit monitor | /app/monitors/new, /app/monitors/:id/edit | Type picker, URL/host, interval, timeout, expected status, keyword, alert channels          |
+| Incidents          | /app/incidents                            | Open and past incidents with duration and cause                                             |
+| Alert channels     | /app/channels                             | Add, verify, test, delete channels                                                          |
+| Status pages       | /app/status-pages                         | Create page, pick monitors, slug, logo, custom domain                                       |
+| Billing            | /app/billing                              | Current plan, usage vs limits, upgrade, invoices link                                       |
+| Settings           | /app/settings                             | Profile, password, timezone, delete account                                                 |
+| Public status page | /s/:slug                                  | Overall status banner, per-monitor 90-day uptime bars, recent incidents                     |
 
 **Key flows**
 
@@ -253,15 +262,15 @@ The biggest risks are the checker being abused to hit internal networks (SSRF) a
 
 **Non-functional targets**
 
-| Requirement | Target |
-| --- | --- |
-| Alert latency (paid) | Under 2 min from outage start |
-| Scheduler drift | Under 10 s from `next_check_at` |
-| Check capacity, single VPS | about 1,000 checks/min |
-| Dashboard API p95 | Under 300 ms |
-| Platform uptime | 99.9% |
-| Status page load | Under 1 s, cached |
-| Backups | Daily DB dump, 14 days kept off-server |
+| Requirement                | Target                                 |
+| -------------------------- | -------------------------------------- |
+| Alert latency (paid)       | Under 2 min from outage start          |
+| Scheduler drift            | Under 10 s from `next_check_at`        |
+| Check capacity, single VPS | about 1,000 checks/min                 |
+| Dashboard API p95          | Under 300 ms                           |
+| Platform uptime            | 99.9%                                  |
+| Status page load           | Under 1 s, cached                      |
+| Backups                    | Daily DB dump, 14 days kept off-server |
 
 **Privacy.** Store only account email and monitor config; publish a privacy policy and terms before charging.
 
@@ -271,14 +280,14 @@ Everything runs as Docker containers on one VPS behind Caddy, deployed by GitHub
 
 **Hosting**
 
-| Component | Where | Est. cost (USD/month) |
-| --- | --- | --- |
-| VPS, 4 vCPU / 8 GB (API, worker, DB, Redis) | Hetzner or DigitalOcean | 10–25 |
-| Frontend (static build) | Vercel or Cloudflare Pages | 0 |
-| Transactional email | Resend / Postmark free tier, then paid | 0–15 |
-| Off-site backups | Backblaze B2 or Cloudflare R2 | 1 |
-| Domain | Registrar of choice | about 1 |
-| Phase 2 probe nodes (2 extra regions) | Small VPS each | 5–10 |
+| Component                                   | Where                                  | Est. cost (USD/month) |
+| ------------------------------------------- | -------------------------------------- | --------------------- |
+| VPS, 4 vCPU / 8 GB (API, worker, DB, Redis) | Hetzner or DigitalOcean                | 10–25                 |
+| Frontend (static build)                     | Vercel or Cloudflare Pages             | 0                     |
+| Transactional email                         | Resend / Postmark free tier, then paid | 0–15                  |
+| Off-site backups                            | Backblaze B2 or Cloudflare R2          | 1                     |
+| Domain                                      | Registrar of choice                    | about 1               |
+| Phase 2 probe nodes (2 extra regions)       | Small VPS each                         | 5–10                  |
 
 **CI/CD**
 

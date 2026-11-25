@@ -20,6 +20,69 @@ public class UptimeMonitor : ITenantOwned
     public DateTimeOffset NextCheckAt { get; set; } = DateTimeOffset.UtcNow;
     public int ConsecutiveFailures { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    /// <summary>Applies one check result, following the incident lifecycle in SPEC section 6.</summary>
+    public CheckTransition RecordCheck(bool isUp, DateTimeOffset now)
+    {
+        if (Status == MonitorStatus.Paused)
+        {
+            return CheckTransition.Ignored;
+        }
+
+        LastCheckedAt = now;
+
+        if (isUp)
+        {
+            var wasDown = Status == MonitorStatus.Down;
+            Status = MonitorStatus.Up;
+            ConsecutiveFailures = 0;
+            return wasDown ? CheckTransition.Recovered : CheckTransition.NoChange;
+        }
+
+        ConsecutiveFailures++;
+
+        if (Status == MonitorStatus.Down)
+        {
+            return CheckTransition.NoChange;
+        }
+
+        if (ConsecutiveFailures < CheckRules.FailuresToGoDown)
+        {
+            // Still up (or pending) until a quick retry confirms the failure.
+            NextCheckAt = now + CheckRules.RetryDelay;
+            return CheckTransition.RetryScheduled;
+        }
+
+        Status = MonitorStatus.Down;
+        return CheckTransition.WentDown;
+    }
+
+    /// <summary>Stops scheduling. Returns false if it was already paused.</summary>
+    public bool Pause()
+    {
+        if (Status == MonitorStatus.Paused)
+        {
+            return false;
+        }
+
+        Status = MonitorStatus.Paused;
+        ConsecutiveFailures = 0;
+        return true;
+    }
+
+    /// <summary>Returns to pending and due now. Returns false if it wasn't paused.</summary>
+    public bool Resume(DateTimeOffset now)
+    {
+        if (Status != MonitorStatus.Paused)
+        {
+            return false;
+        }
+
+        Status = MonitorStatus.Pending;
+        ConsecutiveFailures = 0;
+        NextCheckAt = now;
+        return true;
+    }
 }
 
 public class CheckResult : ITenantOwned
@@ -56,4 +119,16 @@ public class Incident : ITenantOwned
     public DateTimeOffset? ResolvedAt { get; set; }
     public required string Cause { get; set; }
     public int? DurationSec { get; set; }
+
+    /// <summary>Closes the incident and records how long it lasted. Does nothing if already closed.</summary>
+    public void Resolve(DateTimeOffset now)
+    {
+        if (ResolvedAt is not null)
+        {
+            return;
+        }
+
+        ResolvedAt = now;
+        DurationSec = (int)Math.Max(0, (now - StartedAt).TotalSeconds);
+    }
 }

@@ -6,6 +6,7 @@ using PingWatch.Application.Accounts;
 using PingWatch.Application.Auth;
 using PingWatch.Infrastructure;
 using PingWatch.Infrastructure.Email;
+using PingWatch.Application.Monitors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,11 +26,15 @@ builder.Services.AddInfrastructure(connectionString)
 builder.Services.AddSingleton(new AuthLinkOptions(appBaseUrl));
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<MonitorService>();
+builder.Services.AddScoped<MonitorReportService>();
 
 builder.Services
-    .AddControllers(options => options.Filters.Add<ValidationExceptionFilter>())
+    .AddControllers(options => options.Filters.Add<ApiExceptionFilter>())
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(
-        new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower)));
+        // Names only: a number would slip through as an undefined enum value.
+        new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower, 
+    allowIntegerValues: false)));
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 

@@ -29,6 +29,9 @@ public interface IRefreshTokenStore
 
     /// <summary>Consumes a token and returns its replacement, or null if it can't be used.</summary>
     Task<RotatedRefreshToken?> RotateAsync(string token, CancellationToken cancellationToken);
+
+    /// <summary>Ends the session the token belongs to. Unknown tokens are ignored.</summary>
+    Task RevokeSessionAsync(string token, CancellationToken cancellationToken);
 }
 
 public interface IAccessTokenIssuer

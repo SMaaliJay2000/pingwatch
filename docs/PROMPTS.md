@@ -6,6 +6,7 @@ Put `CLAUDE.md` in the repo root and the exported design doc at `docs/SPEC.md` b
 ---
 
 ## M0 — Scaffold the monorepo
+
 ```
 Read CLAUDE.md and docs/SPEC.md. Scaffold the monorepo exactly as the layout in CLAUDE.md:
 - backend/PingWatch.sln with Domain, Application, Infrastructure, Api, Worker projects (.NET 9) and the two test projects, with correct project references.
@@ -17,6 +18,7 @@ Verify: dotnet build, dotnet test, npm run build all succeed.
 ```
 
 ## M1 — Domain + database
+
 ```
 Implement the data model from SPEC section 5 in PingWatch.Domain and an EF Core DbContext in Infrastructure:
 accounts, users (Identity), monitors, check_results, daily_stats, incidents, alert_channels, monitor_channels, status_pages, status_page_monitors, alert_log.
@@ -28,6 +30,7 @@ Add unit tests for plan limit rules.
 ```
 
 ## M2 — Auth + accounts
+
 ```
 Implement auth per SPEC section 8:
 POST /api/v1/auth/register, login, refresh, forgot-password, reset-password, plus email verification.
@@ -40,6 +43,7 @@ Integration tests with WebApplicationFactory + Testcontainers for register → v
 ```
 
 ## M3 — Monitors API
+
 ```
 Implement monitor CRUD per SPEC section 8: list, create, get, update, delete, pause, resume, results (paged), stats (24h/7d/30d/90d).
 - FluentValidation: URL format, interval >= plan minimum, timeout 1–30 s, type-specific required fields.
@@ -49,7 +53,8 @@ Implement monitor CRUD per SPEC section 8: list, create, get, update, delete, pa
 Integration tests for plan limits and tenant isolation (account A cannot read account B's monitor).
 ```
 
-## M4 — Check engine (worker)
+## M4 — Check engine (worker) - done up to this
+
 ```
 Implement PingWatch.Worker per SPEC section 6:
 - SchedulerService: every 5 s, select due monitors with FOR UPDATE SKIP LOCKED (raw SQL via EF), set next_check_at, enqueue into Channel<CheckJob>.
@@ -63,6 +68,7 @@ Unit tests: state transitions table from SPEC, SsrfGuard ranges, keyword match, 
 ```
 
 ## M5 — Alerting
+
 ```
 Implement alerting per SPEC section 7:
 - Alert channels CRUD + POST /channels/{id}/test. Encrypt config with Data Protection.
@@ -73,6 +79,7 @@ Unit tests for payload shape, signature, reminder timing and SSL de-duplication.
 ```
 
 ## M6 — Frontend: auth + dashboard + monitors
+
 ```
 Build the web app per SPEC section 9 using shadcn/ui:
 - Layout: sidebar (Dashboard, Incidents, Channels, Status pages, Billing, Settings), top bar with user menu, dark mode toggle.
@@ -86,6 +93,7 @@ npm run lint, typecheck and build must pass.
 ```
 
 ## M7 — Status pages + incidents + channels UI
+
 ```
 - Status pages API (CRUD) and public endpoint GET /api/v1/public/status/{slug} with 30 s output caching.
 - Public page /s/:slug: overall banner, per-monitor 90-day uptime bars, recent incidents. No auth, fast, SEO meta tags.
@@ -94,6 +102,7 @@ npm run lint, typecheck and build must pass.
 ```
 
 ## M8 — Billing
+
 ```
 Implement billing per SPEC section 3 with Lemon Squeezy behind IBillingProvider:
 - POST /billing/checkout returns checkout URL for Starter/Pro, monthly/yearly.
@@ -104,6 +113,7 @@ Integration tests for webhook handling and downgrade.
 ```
 
 ## M9 — Production readiness
+
 ```
 - Production Dockerfiles (multi-stage) for api, worker, web; docker-compose.prod.yml with Caddy (auto HTTPS), postgres with volume.
 - Serilog structured logging, /health/live and /health/ready.
