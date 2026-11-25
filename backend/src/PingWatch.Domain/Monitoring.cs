@@ -20,6 +20,33 @@ public class UptimeMonitor : ITenantOwned
     public DateTimeOffset NextCheckAt { get; set; } = DateTimeOffset.UtcNow;
     public int ConsecutiveFailures { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    /// <summary>Stops scheduling. Returns false if it was already paused.</summary>
+    public bool Pause()
+    {
+        if (Status == MonitorStatus.Paused)
+        {
+            return false;
+        }
+
+        Status = MonitorStatus.Paused;
+        ConsecutiveFailures = 0;
+        return true;
+    }
+
+    /// <summary>Returns to pending and due now. Returns false if it wasn't paused.</summary>
+    public bool Resume(DateTimeOffset now)
+    {
+        if (Status != MonitorStatus.Paused)
+        {
+            return false;
+        }
+
+        Status = MonitorStatus.Pending;
+        ConsecutiveFailures = 0;
+        NextCheckAt = now;
+        return true;
+    }
 }
 
 public class CheckResult : ITenantOwned
@@ -56,4 +83,16 @@ public class Incident : ITenantOwned
     public DateTimeOffset? ResolvedAt { get; set; }
     public required string Cause { get; set; }
     public int? DurationSec { get; set; }
+
+    /// <summary>Closes the incident and records how long it lasted. Does nothing if already closed.</summary>
+    public void Resolve(DateTimeOffset now)
+    {
+        if (ResolvedAt is not null)
+        {
+            return;
+        }
+
+        ResolvedAt = now;
+        DurationSec = (int)Math.Max(0, (now - StartedAt).TotalSeconds);
+    }
 }

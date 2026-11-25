@@ -9,6 +9,8 @@ using PingWatch.Infrastructure.Accounts;
 using PingWatch.Infrastructure.Auth;
 using PingWatch.Infrastructure.Email;
 using PingWatch.Infrastructure.Persistence;
+using PingWatch.Application.Monitors;
+using PingWatch.Infrastructure.Monitors;
 
 namespace PingWatch.Infrastructure;
 
@@ -32,6 +34,8 @@ public static class DependencyInjection
         services.AddScoped<IUserAccounts, UserAccounts>();
         services.AddScoped<IRefreshTokenStore, RefreshTokenStore>();
         services.AddScoped<IAccountReader, AccountReader>();
+        services.AddScoped<IMonitorStore, MonitorStore>();
+        services.AddScoped<IMonitorHistory, MonitorHistory>();
 
         return services;
     }
